@@ -1,28 +1,19 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Maintainer:
-"       Amir Salihefendic
-"       http://amix.dk - amix@amix.dk
+"       Cosim Zhou
 "
 " Version:
-"       5.0 - 29/05/12 15:43:36
-"
-" Blog_post:
-"       http://amix.dk/blog/post/19691#The-ultimate-Vim-configuration-on-Github
+"       1.0 - 2014/12/20
 "
 " Awesome_version:
 "       Get this config, nice color schemes and lots of plugins!
 "
 "       Install the awesome version from:
 "
-"           https://github.com/amix/vimrc
-"
-" Syntax_highlighted:
-"       http://amix.dk/vim/vimrc.html
-"
-" Raw_version:
-"       http://amix.dk/vim/vimrc.txt
+"           https://github.com/cosimzhou/my-vimrc
 "
 " Sections:
+"    -> Vundle.vim
 "    -> General
 "    -> VIM user interface
 "    -> Colors and Fonts
@@ -37,17 +28,17 @@
 "    -> Misc
 "    -> Helper functions
 "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
 "  Vundle.vim
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible              " be iMproved, required
-filetype on                  " required
+filetype on                   " required
 
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
+set runtimepath+=~/.vim/bundle/Vundle.vim
 
 call vundle#begin()
 " alternatively, pass a path where Vundle should install plugins
@@ -60,33 +51,61 @@ Plugin 'VundleVim/Vundle.vim'
 " Keep Plugin commands between vundle#begin/end.
 " plugin on GitHub repo
 Plugin 'tpope/vim-fugitive'
+
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
 " Git plugin not hosted on GitHub
 Plugin 'git://git.wincent.com/command-t.git'
+
 " git repos on your local machine (i.e. when working on your own plugin)
 " Plugin 'file:///home/gmarik/path/to/plugin'
 " The sparkup vim script is in a subdirectory of this repo called vim.
 " Pass the path to set the runtimepath properly.
 Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+
 " Install L9 and avoid a Naming conflict if you've already installed a
 " different version somewhere else.
 " Plugin 'ascenator/L9', {'name': 'newL9'}
 
+" add git blame cmdline
 Plugin 'zivyangll/git-blame.vim'
 
+" markdown preview
 Plugin 'iamcco/mathjax-support-for-mkdp'
 Plugin 'iamcco/markdown-preview.vim'
-
-Plugin 'lervag/vimtex'
 
 Plugin 'honza/vim-snippets'
 "Plugin 'sirver/ultisnips'
 
-Plugin 'fatih/vim-go'
-"Plugin 'Valloric/YouCompleteMe'
+" YouCompleteMe
+Plugin 'Valloric/YouCompleteMe'
+
+"
 Plugin 'rhysd/vim-clang-format'
-Plugin 'tikhomirov/vim-glsl'
+
+" Add new language supporting
+Plugin 'fatih/vim-go'         " golang
+Plugin 'uarun/vim-protobuf'   " protobuf
+Plugin 'solarnz/thrift.vim'   " thrift
+Plugin 'tikhomirov/vim-glsl'  " glsl
+Plugin 'bazelbuild/vim-bazel' " bzl, BUILD, WORKSPACE for bazel
+Plugin 'lervag/vimtex'        " latex
+
+" golang source list tagbar
+Plugin 'majutsushi/tagbar'
+
+" vim-gutentags
+Plugin 'ludovicchabant/vim-gutentags'
+Plugin 'skywind3000/gutentags_plus'
+
+" Add maktaba and codefmt to the runtimepath.
+" (The latter must be installed before it can be used.)
+Plugin 'google/vim-maktaba'
+Plugin 'google/vim-codefmt'
+
+" Also add Glaive, which is used to configure codefmt's maktaba flags. See
+" `:help :Glaive` for usage.
+Plugin 'google/vim-glaive'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -103,57 +122,41 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 
+call glaive#Install()
+" Optional: Enable codefmt's default mappings on the <Leader>= prefix.
+Glaive codefmt plugin[mappings]
+Glaive codefmt google_java_executable="java -jar /path/to/google-java-format-VERSION-all-deps.jar"
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
-" Bundle import begin
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" default config
-" .vimrc
-Bundle 'uarun/vim-protobuf'
-
-" thrith support
-Bundle 'solarnz/thrift.vim'
-
-" golang source list tagbar
-Bundle 'majutsushi/tagbar'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-"
-" Bundle import end
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:username="cosimzhou"
+let g:usermail="cosimzhou@hotmail.com"
+
 " Sets how many lines of history VIM has to remember
-set history=700
+set history=1000
+
+" Set to auto read when a file is changed from the outside
+set autoread
+"set autochdir
 
 " Enable filetype plugins
 filetype plugin on
 filetype indent on
-
-" Set to auto read when a file is changed from the outside
-set autoread
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
 let mapleader = ","
 let g:mapleader = ","
 
-" Fast saving
-nmap <leader>w :w!<cr>
 
-
-set autochdir
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => VIM user interface
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 
@@ -165,16 +168,16 @@ set wildignore=*.o,*~,*.pyc
 
 "Always show current position
 set ruler
-set cursorline              " 突出显示当前行
-set cursorcolumn            " 突出显示当前列
-autocmd InsertLeave * se nocul  " 用浅色高亮当前行
-autocmd InsertEnter * se cul    " 用浅色高亮当前行
+"set cursorline
+set cursorcolumn
+autocmd InsertLeave * set nocursorline
+autocmd InsertEnter * set cursorline
 
 " Height of the command bar
 set cmdheight=2
 
 " A buffer becomes hidden when it is abandoned
-set hid
+set hidden  "hid
 
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
@@ -213,26 +216,32 @@ set tm=500
 set foldcolumn=0
 set foldmethod=indent
 set foldlevel=3
-"set foldenable              " 开始折叠
+"set foldenable              " fold code
 
-set autochdir
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number relativenumber  "nu rnu
+set fileencodings=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
+set fileencoding=utf-8
+set termencoding=utf-8
+set encoding=utf-8
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Colors and Fonts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
 
 "colorscheme desert
-"colorscheme molokai
-colorscheme srcery
+colorscheme molokai
+"colorscheme srcery
 set background=dark
 
 " Set extra options when running in GUI mode
 if has("gui_running")
-    set guioptions-=T
-    set guioptions+=e
-    set t_Co=256
-    set guitablabel=%M\ %t
+  set guioptions-=T
+  set guioptions+=e
+  set t_Co=256
+  set guitablabel=%M\ %t
 endif
 
 " Set utf8 as standard encoding and en_US as the standard language
@@ -242,20 +251,23 @@ set encoding=utf8
 set ffs=unix,dos,mac
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Files, backups and undo
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn backup off, since most stuff is in SVN, git et.c anyway...
 set nobackup
-set nowb
+set nowritebackup "nowb
 set noswapfile
 
 
 nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
+nnoremap <Leader>l :redraw!<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Text, tab and indent related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
 set expandtab
 
@@ -267,17 +279,19 @@ set shiftwidth=2
 set tabstop=2
 
 " Linebreak on 500 characters
-set lbr
+set linebreak
 set tw=500
 
-set ai "Auto indent
-set si "Smart indent
-set nowrap "Don't wrap lines
+set autoindent " Auto indent (ai)
+set smartindent " Smart indent (si)
+set nowrap " Don't wrap lines
 "set wrap "Wrap lines
+noremap <leader>w   :set wrap!<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 "   Plugin config
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " UltiSnips settings
 let g:UltiSnipsExpandTrigger = '<tab>'
 let g:UltiSnipsJumpForwardTrigger = '<tab>'
@@ -293,54 +307,120 @@ let g:tex_conceal='abdmg'
 " vim-go settings
 let g:go_fmt_command = "goimports"
 let g:go_version_warning = 0
-au FileType go nmap <leader>I <Plug>(go-implements)
-au FileType go nmap <leader>i <Plug>(go-info)
-au FileType go nmap <leader>gd <Plug>(go-doc)
-au FileType go nmap <leader>gv <Plug>(go-doc-vertical)
-au FileType go nmap <leader>r <Plug>(go-run)
-au FileType go nmap <leader>b <Plug>(go-build)
-au FileType go nmap <leader>t <Plug>(go-test)
-au FileType go nmap <leader>c <Plug>(go-coverage)
-au FileType go nmap <leader>ds <Plug>(go-def-split)
-au FileType go nmap <leader>dv <Plug>(go-def-vertical)
-au FileType go nmap <leader>dt <Plug>(go-def-tab)
-au FileType go nmap <leader>e <Plug>(go-rename)　
+autocmd FileType go nmap <leader>I <Plug>(go-implements)
+autocmd FileType go nmap <leader>i <Plug>(go-info)
+autocmd FileType go nmap <leader>gd <Plug>(go-doc)
+autocmd FileType go nmap <leader>gv <Plug>(go-doc-vertical)
+autocmd FileType go nmap <leader>r <Plug>(go-run)
+autocmd FileType go nmap <leader>b <Plug>(go-build)
+autocmd FileType go nmap <leader>t <Plug>(go-test)
+autocmd FileType go nmap <leader>c <Plug>(go-coverage)
+autocmd FileType go nmap <leader>ds <Plug>(go-def-split)
+autocmd FileType go nmap <leader>dv <Plug>(go-def-vertical)
+autocmd FileType go nmap <leader>dt <Plug>(go-def-tab)
+autocmd FileType go nmap <leader>e <Plug>(go-rename)　
+
+" gtags
+"
+" Ubuntu install gtags
+"   sudo apt-get build-dep global
+"   sudo apt-get install libncurses5-dev libncursesw5-dev
+"   wget https://ftp.gnu.org/pub/gnu/global/global-6.6.tar.gz
+"   tar -zxvf global-6.6.tar.gz && cd global-6.6
+"   ./configure --with-sqlite3
+"   make -j4
+"   make check
+"   sudo make install
+"   sudo make installcheck
+"   global --version
+"
+"   pip install pygments
+"
+"let $GTAGSLABEL = 'native-pygments'
+let $GTAGSLABEL = 'native'
+let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
+
+" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project', 'WORKSPACE']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = 'tags.project~'
+
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+	let g:gutentags_modules += ['ctags']
+endif
+if executable('gtags-cscope') && executable('gtags')
+	let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" 配置 ctags 的参数，老的 Exuberant-ctags 不能有 --extra=+q，注意
+"let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args = ['--fields=+niazS']  ", '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 如果使用 universal ctags 需要增加下面一行，老的 Exuberant-ctags 不能加下一行
+"let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+let g:gutentags_auto_add_gtags_cscope = 0
+let g:gutentags_define_advanced_commands = 1
+
+set cscopetag " Use cscope as tags command
+set cscopeprg='gtags-cscope' " Use gtags-cscope instead of cscope
+
+"gtags.vim
+let GtagsCscope_Auto_Load = 1
+let CtagsCscope_Auto_Map = 1
+let GtagsCscope_Quiet = 1
+
 
 "plugin 'NERD_tree'
-nmap <silent> <c-n> :NERDTreeToggle<CR>
-"nmap <silent> <c-w> :q<CR>
+function! MyNerdShow()
+  let l:cwd = expand('%:p:h')
+  if expand('%') == ''
+    let l:cwd = expand('#:p:h')
+  endif
+  execute 'NERDTreeToggle '.l:cwd
+endfunction
+nmap <silent> <c-n> :call MyNerdShow()<CR>
 
 " bundle  majutsushi/Tagbar
 nmap <F8> :TagbarToggle<CR>
 let g:tagbar_type_go = {
     \ 'ctagstype' : 'go',
     \ 'kinds'     : [
-        \ 'p:package',
-        \ 'i:imports:1',
-        \ 'c:constants',
-        \ 'v:variables',
-        \ 't:types',
-        \ 'n:interfaces',
-        \ 'w:fields',
-        \ 'e:embedded',
-        \ 'm:methods',
-        \ 'r:constructor',
-        \ 'f:functions'
+    \     'p:package',
+    \     'i:imports:1',
+    \     'c:constants',
+    \     'v:variables',
+    \     't:types',
+    \     'n:interfaces',
+    \     'w:fields',
+    \     'e:embedded',
+    \     'm:methods',
+    \     'r:constructor',
+    \     'f:functions'
     \ ],
     \ 'sro' : '.',
     \ 'kind2scope' : {
-        \ 't' : 'ctype',
-        \ 'n' : 'ntype'
+    \     't' : 'ctype',
+    \     'n' : 'ntype'
     \ },
     \ 'scope2kind' : {
-        \ 'ctype' : 't',
-        \ 'ntype' : 'n'
+    \     'ctype' : 't',
+    \     'ntype' : 'n'
     \ },
     \ 'ctagsbin'  : 'gotags',
     \ 'ctagsargs' : '-sort -silent'
 \ }
 
-set tags=tags;
+set tags=tags.project;
 """"""""""""""""""""""""""""""
 " => Visual mode related
 """"""""""""""""""""""""""""""
@@ -350,9 +430,10 @@ vnoremap <silent> * :call VisualSelection('f')<CR>
 vnoremap <silent> # :call VisualSelection('b')<CR>
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Moving around, tabs, windows and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Treat long lines as break lines (useful when moving around in them)
 map j gj
 map k gk
@@ -370,21 +451,18 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-"nmap <C-a> ggVG
-
 " Quick lookup definition
 map <leader>z  yiw:%s/\C\<<C-R>"\>/&/gn<cr>
 
 " Close the current buffer
 map <leader>bd :Bclose<cr>
-
 " Close all the buffers
 map <leader>ba :1,1000 bd!<cr>
 
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
-map <leader>tl :tabn<cr>
-map <leader>th :tabp<cr>
+"map <leader>tl :tabn<cr>
+"map <leader>th :tabp<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove
@@ -398,112 +476,127 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers
 try
-    set switchbuf=useopen,usetab,newtab
-    set stal=2
+  set switchbuf=useopen,usetab,newtab
+  set showtabline=2
 catch
 endtry
 
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
+  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \   execute "normal! g`\"" |
+  \ endif
 " Remember info about open buffers on close
 set viminfo^=%
 
 
-""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Status line
-""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Always show the status line
 set laststatus=2
-set nu rnu
 
 " Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ POS:\ %l/%L\ %c
+set statusline=\ %{HasPaste()}%{expand('%')}%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ POS:\ %l/%L\ %c
 
-set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
-set termencoding=utf-8
-set encoding=utf-8
-set fileencodings=ucs-bom,utf-8,cp936
-set fileencoding=utf-8
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"""""新文件标题""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+" New file title
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "新建.c,.h,.sh,.java文件，自动插入文件头
-autocmd BufNewFile *.cpp,*.[ch],*.sh,*.py,*.java,*.tex,*.html exec ":call SetTitle()"
+autocmd BufNewFile *.cpp,*.cc,*.[ch],*.sh,*.py,*.java,*.tex,*.html execute ":call SetTitle()"
 ""定义函数SetTitle，自动插入文件头
-func SetTitle()
-    "如果文件类型为.sh文件
+function SetTitle()
+  let l:ext = expand('%:e')
+  let l:linebuf = []
+  let l:inputline = v:none
+  if &filetype == 'sh'
+    call setline(1, "\#! /bin/bash")
+    let l:linebuf = [""
+          \, "\#########################################################################"
+          \, "\# File Name: ".expand("%")
+          \, "\# Author: ".g:username
+          \, "\# mail: ".g:usermail
+          \, "\# Created Time: ".strftime("%c")
+          \, "\#########################################################################"
+          \, ""]
+  elseif &filetype == 'python'
+    call setline(1, "\#! /usr/bin/python")
+    let l:linebuf = ["# -*- coding: UTF-8 -*-", ""
+          \, "\#########################################################################"
+          \, "\# File Name: ".expand("%")
+          \, "\# Author: ".g:username
+          \, "\# mail: ".g:usermail
+          \, "\# Created Time: ".strftime("%c")
+          \, "\#########################################################################"
+          \, ""]
+  elseif &filetype == 'html'
+    call setline(1, "<!doctype html>")
+    let l:linebuf = ["<html lang=\"zh-cn\">"
+          \, "  <head>"
+          \, "    <meta charset=\"UTF-8\">"
+          \, "    <title>Title</title>"
+          \, "  </head>"
+          \, "  <body>", "", ""
+          \, "  </body>"
+          \, "</html>"]
+    let l:inputline = 8
+  elseif &filetype == 'tex'
+    call setline(1, "% LaTex Document")
+    let l:linebuf = ["\\documentclass{article}", ""
+          \, "\\begin{document}", "", ""
+          \, "\\end{document}"]
+    let l:inputline = 5
+  elseif &filetype == 'c'
+    call setline(1, l:ext == 'h'? "#pragma once": '#include "'.expand("%:t:r").'.h"')
+  elseif &filetype == 'cpp'
+    call setline(1, l:ext == 'h'? "#pragma once": '#include "'.expand("%:t:r").'.h"')
+    let l:packarray = split(expand('%:h'), '/')
+    let l:layer = 0
+    for i in l:packarray
+      call insert(l:linebuf, '} // namespace '.i, l:layer)
+      call insert(l:linebuf, 'namespace '.i.' {', l:layer)
+      let l:layer = l:layer + 1
+    endfor
+    call insert(l:linebuf, '', l:layer)
+    call insert(l:linebuf, '', l:layer)
+    call insert(l:linebuf, '')
+    let l:inputline = l:layer+3
+  endif
 
-    if &filetype == 'sh'
-        call setline(1, "\#! /bin/bash")
-        call append(line("."), "")
-        call append(line(".")+1, "\#########################################################################")
-        call append(line(".")+2, "\# File Name: ".expand("%"))
-        call append(line(".")+3, "\# Author: cosim")
-        call append(line(".")+4, "\# mail: cosimzhou@hotmail.com")
-        call append(line(".")+5, "\# Created Time: ".strftime("%c"))
-        call append(line(".")+6, "\#########################################################################")
-        call append(line(".")+7, "")
-    elseif &filetype == 'python'
-        call setline(1, "\#! /usr/bin/python")
-        call append(line("."), "# -*- coding: UTF-8 -*-")
-        call append(line(".")+1, "")
-        call append(line(".")+2, "\#########################################################################")
-        call append(line(".")+3, "\# File Name: ".expand("%"))
-        call append(line(".")+4, "\# Author: cosim")
-        call append(line(".")+5, "\# mail: cosimzhou@hotmail.com")
-        call append(line(".")+6, "\# Created Time: ".strftime("%c"))
-        call append(line(".")+7, "\#########################################################################")
-        call append(line(".")+8, "")
-    elseif &filetype == 'html'
-        call setline(1, "<!doctype html>")
-        call append(line("."), "<html lang=\"zh-cn\">")
-        call append(line(".")+1, "  <head>")
-        call append(line(".")+2, "    <meta charset=\"UTF-8\">")
-        call append(line(".")+3, "    <title>Title</title>")
-        call append(line(".")+4, "  </head>")
-        call append(line(".")+5, "  <body>")
-        call append(line(".")+6, "")
-        call append(line(".")+7, "  </body>")
-        call append(line(".")+8, "</html>")
-    elseif &filetype == 'tex'
-        call setline(1, "% LaTex Document")
-        call append(line("."), "\\documentclass{article}")
-        call append(line(".")+1, "")
-        call append(line(".")+2, "\\begin{document}")
-        call append(line(".")+3, "")
-        call append(line(".")+4, "")
-        call append(line(".")+5, "\\end{document}")
-    else
-        call setline(1, "/*************************************************************************")
-        call append(line("."), "    > File Name: ".expand("%"))
-        call append(line(".")+1, "    > Author: cosim")
-        call append(line(".")+2, "    > Mail: cosimzhou@hotmail.com ")
-        call append(line(".")+3, "    > Created Time: ".strftime("%c"))
-        call append(line(".")+4, " ************************************************************************/")
-        call append(line(".")+5, "")
-        "call append(line(".")+5, "".&filetype)
-    endif
+  if len(l:linebuf)
+    let l:offset = 0
+    for l in l:linebuf
+      call append(line(".")+l:offset, l)
+      let l:offset = l:offset + 1
+    endfor
+  endif
 
-    if &filetype == 'cpp'
-        call append(line(".")+6, "#include<iostream>")
-        call append(line(".")+7, "using namespace std;")
-        call append(line(".")+8, "")
-    elseif &filetype == 'c'
-        call append(line(".")+6, "#include<stdio.h>")
-        call append(line(".")+7, "")
-    endif
-
-    "新建文件后，自动定位到文件末尾
-    autocmd BufNewFile G
+  "autocmd BufNewFile G
+  if l:inputline == v:none
     execute "normal! Go"
-    "autocmd G
-endfunc
+  else
+    execute "normal! ".l:inputline.'j'
+  endif
+endfunction
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function Refactor()
+  let l:v = ""
+  let l:vnew = ""
+  execute "s/\<".l:v."\>/".l:vnew."/g"
+endfunction
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Editing mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remap VIM 0 to first non-blank character
 map 0             ^
 map <leader>0     $
@@ -515,24 +608,25 @@ vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
 if has("mac") || has("macunix")
-    nmap <D-j> <M-j>
-    nmap <D-k> <M-k>
-    vmap <D-j> <M-j>
-    vmap <D-k> <M-k>
+  nmap <D-j> <M-j>
+  nmap <D-k> <M-k>
+  vmap <D-j> <M-j>
+  vmap <D-k> <M-k>
 endif
 
 " Delete trailing white space on save, useful for Python and CoffeeScript ;)
-func! DeleteTrailingWS()
-    exe "normal mz"
-    %s/\s\+$//ge
-    exe "normal `z"
-endfunc
+function! DeleteTrailingWS()
+  execute "normal mz"
+  %s/\s\+$//ge
+  execute "normal `z"
+endfunction
 autocmd BufWrite * :call DeleteTrailingWS()
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => vimgrep searching and cope displaying
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " When you press gv you vimgrep after the selected text
 vnoremap <silent> gv :call VisualSelection('gv')<CR>
 
@@ -541,7 +635,7 @@ map <leader>g   yiw:vimgrep /\C\<<C-R>"\>/ *<cr>/\C\<<C-R>"\><cr>N
 "map <leader>1   :first<cr>
 "map <leader>0   :last<cr>
 map <silent> <leader>gw  :copen<cr>
-map <leader>gg   yiw:!grep -rn --color \\b<C-R>"\\b ..<cr>
+map <leader>gg   yiw:!grep -Irn --color \\b<C-R>"\\b .<cr>
 
 " Vimgreps in the current file
 map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
@@ -565,10 +659,10 @@ map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<cr>
 
@@ -579,175 +673,234 @@ map <leader>sa zg
 map <leader>s? z=
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Misc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-" Quickly open a buffer for scripbble
-map <leader>q :e ~/buffer<cr>
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
 
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " => Helper functions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! CmdLine(str)
-    exe "menu Foo.Bar :" . a:str
-    emenu Foo.Bar
-    unmenu Foo
+  exec "menu Foo.Bar :" . a:str
+  emenu Foo.Bar
+  "unmenu Foo
 endfunction
 
 function! VisualSelection(direction) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
+  let l:saved_reg = @"
+  execute "normal! vgvy"
 
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
+  let l:pattern = escape(@", '\\/.*$^~[]')
+  let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    elseif a:direction == 'gv'
-        call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    elseif a:direction == 'f'
-        execute "normal /" . l:pattern . "^M"
-    endif
+  if a:direction == 'b'
+    execute "normal ?" . l:pattern . "^M"
+  elseif a:direction == 'gv'
+    call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
+  elseif a:direction == 'replace'
+    call CmdLine("%s" . '/'. l:pattern . '/')
+  elseif a:direction == 'f'
+    execute "normal /" . l:pattern . "^M"
+  endif
 
-    let @/ = l:pattern
-    let @" = l:saved_reg
+  let @/ = l:pattern
+  let @" = l:saved_reg
 endfunction
 
-function! IsRem()
-    return 'rema'
-endfunction
 
 " Remark code block in visual mode
 function! RemarkBlock()
-    let l:saved_reg = @"
-    execute 'normal! vgv0o0y'
+  if visualmode() != 'V'
+    execute "V"
+  endif
+  let l:saved_reg = @"
+  execute "y"
 
-    let l:pattern = @"
-    let l:comment = 0
-    execute 'normal! vgv'
-    if &filetype == 'sh' || &filetype == 'python' || &filetype == 'ruby'
-        if l:pattern=~#'^\s*#'
-            let l:comment = 1
-        endif
-        if l:comment
-            :s/^\(\s*\)#/\1/
-        else
-            :s/^/#/
-        endif
-    elseif &filetype == 'tex'
-        if l:pattern=~#'^\s*%'
-            let l:comment = 1
-        endif
-        if l:comment
-            :s/^\(\s*\)%/\1/
-        else
-            :s/^/%/
-        endif
-    elseif &filetype == 'vim'
-        if l:pattern=~#'^\s*\"'
-            let l:comment = 1
-        endif
-        if l:comment
-            :s/^\(\s*\)"/\1/
-        else
-            :s/^/"/
-        endif
-    else
-        if l:pattern=~#'^\s*\/\/'
-            let l:comment = 1
-        endif
-        if l:comment
-            :s/^\(\s*\)\/\//\1/
-        else
-            :s/^/\/\//
-        endif
-    endif
+  let l:symbol = '\/\/'
+  if &filetype == 'sh' || &filetype == 'python' || &filetype == 'ruby' || &filetype == 'bzl'
+    let l:symbol = '#'
+  elseif &filetype == 'tex'
+    let l:symbol = '%'
+  elseif &filetype == 'vim'
+    let l:symbol = '"'
+  elseif &filetype == 'sql'
+    let l:symbol = '--'
+  endif
 
-    let @" = l:saved_reg
-    "execute "normal! gv"
+  let l:remark = v:false
+  let l:pattern = @"
+  if l:pattern =~# '^\s*'.l:symbol
+    let l:remark = v:true
+  endif
+
+  let l:cmd = l:remark? ('s/^\(\s*\)'.l:symbol.'/\1/'):('s/^/'.l:symbol.'/')
+  execute "normal! gv"
+  execute "'<,'>".l:cmd
+  let @" = l:saved_reg
+  execute "normal! gv"
 endfunction
-vmap <silent> <leader>/      :call RemarkBlock()<cr>
-"vmap <silent> <leader>?      :call RemarkBlock('rem')<cr>
+vmap <silent> <leader>/      :<bs><bs><bs><bs><bs>call RemarkBlock()<cr>
+
 
 " Returns true if paste mode is enabled
 function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    endif
-    return ''
+  if &paste
+    return 'PASTE MODE  '
+  endif
+  return ''
 endfunction
 
 " Don't close window, when deleting a buffer
 command! Bclose call <SID>BufcloseCloseIt()
 function! <SID>BufcloseCloseIt()
-    let l:currentBufNum = bufnr("%")
-    let l:alternateBufNum = bufnr("#")
+  let l:currentBufNum = bufnr("%")
+  let l:alternateBufNum = bufnr("#")
 
-    if buflisted(l:alternateBufNum)
-        buffer #
-    else
-        bnext
-    endif
+  if buflisted(l:alternateBufNum)
+    buffer #
+  else
+    bnext
+  endif
 
-    if bufnr("%") == l:currentBufNum
-        new
-    endif
+  if bufnr("%") == l:currentBufNum
+    new
+  endif
 
-    if buflisted(l:currentBufNum)
-        execute("bdelete! ".l:currentBufNum)
-    endif
+  if buflisted(l:currentBufNum)
+    execute("bdelete! ".l:currentBufNum)
+  endif
 endfunction
+
+" source file toggle
+function! ChangeCppFile()
+  let l:hdrs = ['h', 'hpp']
+  let l:csrcs = ['cc', 'cpp', 'c']
+  function! TryCppFile(path, array)
+    for i in a:array
+      if filereadable(a:path.'.'.i)
+        return a:path.'.'.i
+      endif
+    endfor
+    return v:null
+  endfunction
+
+  let l:file = expand('%')
+  for cs in l:csrcs
+    if l:file =~ '.*\.'.cs
+      let l:file = TryCppFile(substitute(l:file, '\.'.cs.'$', '', ''), l:hdrs)
+      if l:file != v:null
+        execute ':e '.l:file
+        return
+      endif
+    endif
+  endfor
+
+  for cs in l:hdrs
+    if l:file =~ '.*\.'.cs
+      let l:file = TryCppFile(substitute(l:file, '\.'.cs.'$', '', ''), l:csrcs)
+      if l:file != v:null
+        execute ':e '.l:file
+        return
+      endif
+    endif
+  endfor
+
+  :echom "no pair file"
+endfunction
+autocmd FileType c,cpp nmap <leader>c :call ChangeCppFile()<CR>
+nmap <leader>o :e <c-r>#<CR>
+
+
+" Try to run c/c++ project built by bazel, make and so on.
+function! RunCppFile()
+  if filereadable('WORKSPACE')
+    let l:path = expand('%:h')
+    let l:file = expand('%:t')
+    let l:pack = expand('%:t:r')
+    let l:pack = "main"     "expand('%:t:r')
+
+    execute 'Bazel run //'.l:path.':'.l:pack
+    return v:true
+  elseif filereadable('Makefile')
+    execute 'make'
+    return v:true
+  endif
+  return v:false
+endfunction
+
+nmap <leader>b :let @z=substitute(expand('%:r:h'),'.*\zs/',':','')<cr>:Bazel build //<c-r>z
+nmap <leader>br :let @z=substitute(expand('%:r:h'),'.*\zs/',':','')<cr>:Bazel run //<c-r>z
 
 function! Setup_ExecNDisplay()
-    execute "w"
-    if &filetype == 'tex'
-      " make latex pdf
-        execute "!xelatex %:p 2>&1 && xelatex %:p 2>&1 && open -a preview %:p:r.pdf 2>&1; ls %:p:r\.*|grep -v '.*\.tex\n.*\.pdf'|xargs rm 2>/dev/null"
-    elseif &filetype == 'c'
-      " gcc c source
-        execute "!gcc %:p -o %:p.out 2>&1 && time %:p.out"
-    elseif &filetype == 'cpp'
-      " g++ a c++ source
-        execute "!g++ %:p -o %:p.out 2>&1 && time %:p.out"
-    elseif &filetype == 'html'
-      " open in a web browser
-        execute "!open %:p"
-    elseif &filetype == 'java'
-      " java
-        execute "!javac %:p 2>&1 && java %:t:r"
+  execute "w"
+  if RunCppFile()
+    echom "build target"
+  elseif &filetype == 'vim'
+    " run vimscript
+    execute "so %"
+  elseif &filetype == 'tex'
+    " make latex pdf
+    execute "!xelatex %:p 2>&1 && xelatex %:p 2>&1 && open -a preview %:p:r.pdf 2>&1; ls %:p:r\.*|grep -v '.*\.tex\n.*\.pdf'|xargs rm 2>/dev/null"
+  elseif &filetype == 'c'
+    " gcc c source
+    execute "!gcc %:p -o %:p.out 2>&1"
+  elseif &filetype == 'cpp'
+    " g++ a c++ source
+    execute "!g++ %:p -o %:p.out 2>&1"
+  elseif &filetype == 'html'
+    " open in a web browser
+    execute "!open %:p"
+  elseif &filetype == 'java'
+    " java
+    execute "!javac %:p 2>&1 && java %:t:r"
+  elseif &filetype == 'markdown'
+    " md
+    if g:mkdp_server_started
+      execute ":MarkdownPreviewStop"
+      echo "Markdown preview stopped"
     else
-        execute "silent !chmod +x %:p"
-        let n=expand('%:t')
-        execute "!%:p 2>&1"
-    " | tee ~/.vim/output_".n
-    " I prefer vsplit
-    "execute "split ~/.vim/output_".n
-    "  execute "vsplit ~/.vim/output_".n
-    "  execute "redraw!"
+      execute ":MarkdownPreview"
+      echo "Markdown previewing"
     endif
-    set autoread
+  else
+    execute "silent !chmod +x %:p"
+    execute "!%:p 2>&1"
+  endif
 endfunction
-
 nmap <F5> :call Setup_ExecNDisplay()<CR>
-vnoremap <F3> :ClangFormat<CR>
+
+" Binary editor
+let b:edit_binary_mode = v:false
+function! BinaryEditToggle()
+  if b:edit_binary_mode
+    let b:edit_binary_mode = v:false
+    execute ":%!xxd -r"
+    set readonly
+  else
+    let b:edit_binary_mode = v:true
+    execute ":%!xxd -g 1"
+    set noreadonly
+  endif
+  execute "redraw!"
+endfunction
+nmap <silent><leader>h :call BinaryEditToggle()<CR>
 
 nnoremap x "_x
 nnoremap X "_X
-nnoremap d "_d
-nnoremap dd "_dd
-nnoremap D "_D
-vnoremap d "_d
-vnoremap dd "_dd
+"nnoremap D "_D
+"vnoremap d "_d
+"vnoremap dd "_dd
+nnoremap c "_c
+vnoremap c "_c
 
 nnoremap <leader>x ""x
 nnoremap <leader>X ""X
@@ -759,50 +912,63 @@ vnoremap <leader>dd ""dd
 
 let g:ToggleOfCutAndDelete = '1'
 function! ToggleCutAndDelete()
+  if g:ToggleOfCutAndDelete == '0'
+    let g:ToggleOfCutAndDelete = '1'
 
-    if g:ToggleOfCutAndDelete == '0'
-        let g:ToggleOfCutAndDelete = '1'
+    nnoremap x "_x
+    nnoremap X "_X
+    nnoremap d "_d
+    nnoremap dd "_dd
+    nnoremap D "_D
+    vnoremap d "_d
+    vnoremap dd "_dd
 
-        nnoremap x "_x
-        nnoremap X "_X
-        nnoremap d "_d
-        nnoremap dd "_dd
-        nnoremap D "_D
-        vnoremap d "_d
-        vnoremap dd "_dd
+    nnoremap <leader>x ""x
+    nnoremap <leader>X ""X
+    nnoremap <leader>d ""d
+    nnoremap <leader>dd ""dd
+    nnoremap <leader>D ""D
+    vnoremap <leader>d ""d
+    vnoremap <leader>dd ""dd
 
-        nnoremap <leader>x ""x
-        nnoremap <leader>X ""X
-        nnoremap <leader>d ""d
-        nnoremap <leader>dd ""dd
-        nnoremap <leader>D ""D
-        vnoremap <leader>d ""d
-        vnoremap <leader>dd ""dd
+    execute "echo 'Delete mode enter'"
+  else
+    let g:ToggleOfCutAndDelete = '0'
 
-        execute "echo 'Delete mode enter'"
-    else
-        let g:ToggleOfCutAndDelete = '0'
+    nnoremap x ""x
+    nnoremap X ""X
+    nnoremap d ""d
+    nnoremap dd ""dd
+    nnoremap D ""D
+    vnoremap d ""d
+    vnoremap dd ""dd
 
-        nnoremap x ""x
-        nnoremap X ""X
-        nnoremap d ""d
-        nnoremap dd ""dd
-        nnoremap D ""D
-        vnoremap d ""d
-        vnoremap dd ""dd
+    nnoremap <leader>x "_x
+    nnoremap <leader>X "_X
+    nnoremap <leader>d "_d
+    nnoremap <leader>dd "_dd
+    nnoremap <leader>D "_D
+    vnoremap <leader>d "_d
+    vnoremap <leader>dd "_dd
 
-        nnoremap <leader>x "_x
-        nnoremap <leader>X "_X
-        nnoremap <leader>d "_d
-        nnoremap <leader>dd "_dd
-        nnoremap <leader>D "_D
-        vnoremap <leader>d "_d
-        vnoremap <leader>dd "_dd
-
-        execute "echo 'Cut mode enter'"
-    endif
+    execute "echo 'Cut mode enter'"
+  endif
 endfunction
 nmap <F2> :call ToggleCutAndDelete()<CR>
+vnoremap <F3> :ClangFormat<CR>
 
 
-syntax on
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer yapf
+  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  autocmd FileType rust AutoFormatBuffer rustfmt
+  autocmd FileType vue AutoFormatBuffer prettier
+augroup END
+
