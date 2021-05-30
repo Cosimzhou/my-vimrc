@@ -90,9 +90,11 @@ Plugin 'solarnz/thrift.vim'   " thrift
 Plugin 'tikhomirov/vim-glsl'  " glsl
 Plugin 'bazelbuild/vim-bazel' " bzl, BUILD, WORKSPACE for bazel
 Plugin 'lervag/vimtex'        " latex
+Plugin 'pangloss/vim-javascript'
 
 " golang source list tagbar
-Plugin 'majutsushi/tagbar'
+"Plugin 'majutsushi/tagbar'
+Plugin 'preservim/tagbar'
 
 " vim-gutentags
 Plugin 'ludovicchabant/vim-gutentags'
@@ -102,6 +104,7 @@ Plugin 'skywind3000/gutentags_plus'
 " (The latter must be installed before it can be used.)
 Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmt'
+Plugin 'maksimr/vim-jsbeautify'
 
 " Also add Glaive, which is used to configure codefmt's maktaba flags. See
 " `:help :Glaive` for usage.
@@ -152,6 +155,8 @@ filetype indent on
 let mapleader = ","
 let g:mapleader = ","
 
+" System clipboard copy & paste
+nmap <leader>y  "+y
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
@@ -232,8 +237,9 @@ set encoding=utf-8
 syntax enable
 
 "colorscheme desert
-colorscheme molokai
+"colorscheme molokai
 "colorscheme srcery
+colorscheme darkblue
 set background=dark
 
 " Set extra options when running in GUI mode
@@ -287,6 +293,7 @@ set smartindent " Smart indent (si)
 set nowrap " Don't wrap lines
 "set wrap "Wrap lines
 noremap <leader>w   :set wrap!<CR>
+"inoremap <silent><Esc>  <Esc>`^
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
@@ -382,10 +389,7 @@ let GtagsCscope_Quiet = 1
 
 "plugin 'NERD_tree'
 function! MyNerdShow()
-  let l:cwd = expand('%:p:h')
-  if expand('%') == ''
-    let l:cwd = expand('#:p:h')
-  endif
+  let l:cwd = findfile(expand('%')) == ''? expand('#:p:h'): expand('%:p:h')
   execute 'NERDTreeToggle '.l:cwd
 endfunction
 nmap <silent> <c-n> :call MyNerdShow()<CR>
@@ -498,24 +502,30 @@ set viminfo^=%
 set laststatus=2
 
 " Format the status line
-set statusline=\ %{HasPaste()}%{expand('%')}%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ POS:\ %l/%L\ %c
+set statusline=\ %{expand('%')}%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ POS:\ %l/%L\ %c\ %{HasPaste()}
 
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
-" New file title
+" New file template
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "新建.c,.h,.sh,.java文件，自动插入文件头
-autocmd BufNewFile *.cpp,*.cc,*.[ch],*.sh,*.py,*.java,*.tex,*.html execute ":call SetTitle()"
-""定义函数SetTitle，自动插入文件头
-function SetTitle()
+autocmd BufNewFile *.cpp,*.cc,*.[ch],*.sh,*.py,*.java,*.tex,*.html execute ":call TemplateDoc()"
+autocmd BufReadPost *.cpp,*.cc,*.[ch],*.sh,*.py,*.java,*.tex,*.html
+      \ if line('$') == 1 && getline(1) == '' |
+      \   execute ":call TemplateDoc()" |
+      \ endif
+function ClassNameCpp(filename)
+  return substitute(substitute(a:filename, '\v_(\l)', '\U\1', 'g'), '\v^(\l)', '\U\1', '')
+endfunction
+""定义函数TemplateDoc，自动插入文件头
+function TemplateDoc()
   let l:ext = expand('%:e')
   let l:linebuf = []
   let l:inputline = v:none
   if &filetype == 'sh'
-    call setline(1, "\#! /bin/bash")
-    let l:linebuf = [""
+    let l:linebuf = ["\#! /bin/bash", ""
           \, "\#########################################################################"
           \, "\# File Name: ".expand("%")
           \, "\# Author: ".g:username
@@ -524,8 +534,8 @@ function SetTitle()
           \, "\#########################################################################"
           \, ""]
   elseif &filetype == 'python'
-    call setline(1, "\#! /usr/bin/python")
-    let l:linebuf = ["# -*- coding: UTF-8 -*-", ""
+    let l:linebuf = ["\#! /usr/bin/python"
+          \, "# -*- coding: UTF-8 -*-", ""
           \, "\#########################################################################"
           \, "\# File Name: ".expand("%")
           \, "\# Author: ".g:username
@@ -534,8 +544,8 @@ function SetTitle()
           \, "\#########################################################################"
           \, ""]
   elseif &filetype == 'html'
-    call setline(1, "<!doctype html>")
-    let l:linebuf = ["<html lang=\"zh-cn\">"
+    let l:linebuf = ["<!doctype html>"
+          \, "<html lang=\"zh-cn\">"
           \, "  <head>"
           \, "    <meta charset=\"UTF-8\">"
           \, "    <title>Title</title>"
@@ -545,31 +555,49 @@ function SetTitle()
           \, "</html>"]
     let l:inputline = 8
   elseif &filetype == 'tex'
-    call setline(1, "% LaTex Document")
-    let l:linebuf = ["\\documentclass{article}", ""
+    let l:linebuf = ["% LaTex Document"
+          \, "\\documentclass{article}", ""
           \, "\\begin{document}", "", ""
           \, "\\end{document}"]
     let l:inputline = 5
   elseif &filetype == 'c'
-    call setline(1, l:ext == 'h'? "#pragma once": '#include "'.expand("%:t:r").'.h"')
+    let l:linebuf = [l:ext == 'h'? "#pragma once": '#include "'.expand("%:t:r").'.h"']
   elseif &filetype == 'cpp'
-    call setline(1, l:ext == 'h'? "#pragma once": '#include "'.expand("%:t:r").'.h"')
+    let l:filename = expand("%:t:r")
+    if l:ext == 'h'
+      let l:linebuf = ["#pragma once", ""]
+    elseif l:filename =~# '_test$'
+      let l:linebuf += ['#include "'.expand("%:h").'/'.substitute(l:filename, '\v_test$', '', '').'.h"'
+            \, '', '#include "glog/logging.h"'
+            \, '#include "gmock/gmock.h"'
+            \, '#include "gtest/gtest.h"', '']
+    else
+      let l:linebuf = ['#include "'.expand("%:h").'/'.l:filename.'.h"']
+    endif
     let l:packarray = split(expand('%:h'), '/')
-    let l:layer = 0
+    let l:layer = len(l:linebuf)
     for i in l:packarray
-      call insert(l:linebuf, '} // namespace '.i, l:layer)
+      call insert(l:linebuf, '}  // namespace '.i, l:layer)
       call insert(l:linebuf, 'namespace '.i.' {', l:layer)
       let l:layer = l:layer + 1
     endfor
     call insert(l:linebuf, '', l:layer)
+    if l:filename =~# '_test$'
+      let l:class_name = ClassNameCpp(l:filename)
+      call insert(l:linebuf, 'class '.l:class_name.' : public ::testing::Test {};', l:layer)
+      call insert(l:linebuf, '', l:layer+1)
+      call insert(l:linebuf, 'TEST_F('.l:class_name.', Normal) {}', l:layer+2)
+    elseif l:filename =~# '_mock'
+      let l:linebuf += ['class '.l:class_name.' {', 'MOCK_METHOD1(Func, void(int));', '};'];
+    endif
     call insert(l:linebuf, '', l:layer)
-    call insert(l:linebuf, '')
     let l:inputline = l:layer+3
   endif
 
   if len(l:linebuf)
     let l:offset = 0
-    for l in l:linebuf
+    call setline(1, l:linebuf[0])
+    for l in l:linebuf[1:]
       call append(line(".")+l:offset, l)
       let l:offset = l:offset + 1
     endfor
@@ -631,7 +659,7 @@ autocmd BufWrite * :call DeleteTrailingWS()
 vnoremap <silent> gv :call VisualSelection('gv')<CR>
 
 " Open vimgrep and put the cursor in the right position
-map <leader>g   yiw:vimgrep /\C\<<C-R>"\>/ *<cr>/\C\<<C-R>"\><cr>N
+map <leader>g   yiw:vimgrep /\C\<<C-R>"\>/ ./**/*<cr>/\C\<<C-R>"\><cr>N
 "map <leader>1   :first<cr>
 "map <leader>0   :last<cr>
 map <silent> <leader>gw  :copen<cr>
@@ -719,9 +747,7 @@ endfunction
 
 " Remark code block in visual mode
 function! RemarkBlock()
-  if visualmode() != 'V'
-    execute "V"
-  endif
+  if visualmode() != 'V'| execute "V"| endif
   let l:saved_reg = @"
   execute "y"
 
@@ -734,29 +760,34 @@ function! RemarkBlock()
     let l:symbol = '"'
   elseif &filetype == 'sql'
     let l:symbol = '--'
+  elseif &filetype == 'bas' || &filetype == 'vbs'
+    let l:symbol = "'"
   endif
-
-  let l:remark = v:false
   let l:pattern = @"
-  if l:pattern =~# '^\s*'.l:symbol
-    let l:remark = v:true
-  endif
+  let l:is_remark = l:pattern =~# '^\s*'.l:symbol
 
-  let l:cmd = l:remark? ('s/^\(\s*\)'.l:symbol.'/\1/'):('s/^/'.l:symbol.'/')
+  "
+  let l:indent = len(l:pattern)
+  for l:sngl in split(l:pattern, '\r')
+    let l:diff = len(l:sngl) - len(substitute(l:sngl, '^\s*', '', ''))
+    if l:diff < l:indent | let l:indent = l:diff | endif
+    if l:diff == 0 | break | endif
+  endfor
+  let l:prefix = repeat('\s', l:indent)
+
+  " Remark action
+  let l:cmd = l:is_remark? ('s/^\(\s*\)'.l:symbol.'/\1/'): ('s/^\('.l:prefix.'\)/\1'.l:symbol.'/')
   execute "normal! gv"
   execute "'<,'>".l:cmd
   let @" = l:saved_reg
-  execute "normal! gv"
+  "execute "normal! gv"
 endfunction
 vmap <silent> <leader>/      :<bs><bs><bs><bs><bs>call RemarkBlock()<cr>
 
 
 " Returns true if paste mode is enabled
 function! HasPaste()
-  if &paste
-    return 'PASTE MODE  '
-  endif
-  return ''
+  return &paste? '<PASTE>': ''
 endfunction
 
 " Don't close window, when deleting a buffer
@@ -780,7 +811,7 @@ function! <SID>BufcloseCloseIt()
   endif
 endfunction
 
-" source file toggle
+" Source file toggle
 function! ChangeCppFile()
   let l:hdrs = ['h', 'hpp']
   let l:csrcs = ['cc', 'cpp', 'c']
@@ -814,22 +845,33 @@ function! ChangeCppFile()
     endif
   endfor
 
-  :echom "no pair file"
+  echom "no pair file"
 endfunction
 autocmd FileType c,cpp nmap <leader>c :call ChangeCppFile()<CR>
 nmap <leader>o :e <c-r>#<CR>
+nmap <leader>p :set paste<CR>
 
 
 " Try to run c/c++ project built by bazel, make and so on.
 function! RunCppFile()
   if filereadable('WORKSPACE')
     let l:path = expand('%:h')
+    let l:paths = split(l:path,'/')
     let l:file = expand('%:t')
     let l:pack = expand('%:t:r')
-    let l:pack = "main"     "expand('%:t:r')
 
-    execute 'Bazel run //'.l:path.':'.l:pack
-    return v:true
+    let l:trylist = ['main', l:paths[-1].'_main', l:pack, l:paths[-1]]
+    let l:run = l:pack =~# '\v_test$'? 'test': 'run'
+
+    for p in l:trylist
+      let l:cmd = 'Bazel '.l:run.' //'.l:path.':'.p
+      let l:candidates = bazel#CompletionList(0,l:cmd,len(l:cmd))
+      if len(l:candidates) > 0
+        execute l:cmd
+        echom l:cmd
+        return v:true
+      endif
+    endfor
   elseif filereadable('Makefile')
     execute 'make'
     return v:true
@@ -837,9 +879,38 @@ function! RunCppFile()
   return v:false
 endfunction
 
-nmap <leader>b :let @z=substitute(expand('%:r:h'),'.*\zs/',':','')<cr>:Bazel build //<c-r>z
-nmap <leader>br :let @z=substitute(expand('%:r:h'),'.*\zs/',':','')<cr>:Bazel run //<c-r>z
 
+" Bazel supports
+function! BazelTargetArgs()
+  let l:target0 = substitute(expand('%:r:h'),'.*\zs/',':','')
+  let l:target = substitute(l:target0,'_main$','','')
+  let l:target = substitute(l:target,'\.','_','')
+  let l:debug = '--compilation_mode=dbg -s'
+  let l:action = 'run'
+  if &filetype == 'proto'
+    let l:target .= '_proto'
+    let l:debug = '-s'
+    let l:action = 'build'
+  endif
+  if l:target0 =~# '_test$'
+    let l:action = 'test'
+  endif
+  let @/=l:debug
+  let @z=l:target
+  let @x=l:action
+  return l:target
+endfunction
+
+nmap <leader>b   :call BazelTargetArgs()<cr>:Bazel build <c-r>/ //<c-r>z
+nmap <leader>br  :call BazelTargetArgs()<cr>:Bazel <c-r>x <c-r>/ //<c-r>z
+nmap <leader>bd  :call BazelTargetArgs()<cr>:Bazel build -c opt //<c-r>z
+nmap <leader>bq  :call BazelTargetArgs()<cr>:!bazel query 'deps(<c-r>z)'
+nmap <leader>bqq :call BazelTargetArgs()<cr>:!bazel query 'somepath(<c-r>z, )'<left><left>
+nmap <leader>bt  :let @z=expand('%:.:h')<cr>:Bazel test --compilation_mode=dbg -s //<c-r>z/...<cr>
+nmap <leader>bb  :e %:p:h/BUILD<cr>
+nmap <leader>q   /\<error:<cr>
+
+" Run test or preview
 function! Setup_ExecNDisplay()
   execute "w"
   if RunCppFile()
@@ -855,13 +926,16 @@ function! Setup_ExecNDisplay()
     execute "!gcc %:p -o %:p.out 2>&1"
   elseif &filetype == 'cpp'
     " g++ a c++ source
-    execute "!g++ %:p -o %:p.out 2>&1"
+    execute "!g++ -std=c++11 %:p -o %:p.out 2>&1"
   elseif &filetype == 'html'
     " open in a web browser
     execute "!open %:p"
   elseif &filetype == 'java'
     " java
     execute "!javac %:p 2>&1 && java %:t:r"
+  elseif &filetype == 'dot'
+    " dot
+    execute "!dot -Tsvg %:p >/tmp/.tmp-graphviz.svg && open /tmp/.tmp-graphviz.svg"
   elseif &filetype == 'markdown'
     " md
     if g:mkdp_server_started
@@ -876,6 +950,7 @@ function! Setup_ExecNDisplay()
     execute "!%:p 2>&1"
   endif
 endfunction
+
 nmap <F5> :call Setup_ExecNDisplay()<CR>
 
 " Binary editor
@@ -922,6 +997,7 @@ nnoremap <leader>dd ""dd
 nnoremap <leader>D ""D
 vnoremap <leader>d ""d
 vnoremap <leader>dd ""dd
+nmap <leader>f :let @+=expand('%:p')<CR>:echo @+<CR>
 
 let g:ToggleOfCutAndDelete = '1'
 function! ToggleCutAndDelete()
@@ -973,14 +1049,16 @@ vnoremap <F3> :ClangFormat<CR>
 
 augroup autoformat_settings
   autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+  autocmd FileType c,cpp,proto,arduino AutoFormatBuffer clang-format
   autocmd FileType dart AutoFormatBuffer dartfmt
   autocmd FileType go AutoFormatBuffer gofmt
   autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType html,css,sass,scss,less,javascript AutoFormatBuffer js-beautify
+  "autocmd FileType json AutoFormatBuffer js-beautify
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer yapf
-  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  " Alternative:
+  " autocmd FileType python AutoFormatBuffer autopep8
   autocmd FileType rust AutoFormatBuffer rustfmt
   autocmd FileType vue AutoFormatBuffer prettier
 augroup END
