@@ -678,7 +678,7 @@ map <leader>s? z=
 " => Misc
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+noremap <Leader>mmm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
@@ -893,6 +893,19 @@ function! BinaryEditToggle()
   execute "redraw!"
 endfunction
 nmap <silent><leader>h :call BinaryEditToggle()<CR>
+
+" Mouse Using
+function! ToggleMouseUse()
+  if &mouse != 'a'
+    set mouse=a
+    echom "Enable mouse"
+  else
+    set mouse=
+    echom "Disable mouse"
+  endif
+endfunction
+nmap <leader>m :call ToggleMouseUse()<cr>
+
 
 nnoremap x "_x
 nnoremap X "_X
