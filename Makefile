@@ -1,7 +1,7 @@
 
 
-In:
-	@./update.sh In
+save:
+	@./update.sh save
 
-Out:
-	@./update.sh Out
+restore:
+	@./update.sh restore

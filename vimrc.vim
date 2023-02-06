@@ -92,6 +92,9 @@ Plugin 'tikhomirov/vim-glsl'  " glsl
 Plugin 'bazelbuild/vim-bazel' " bzl, BUILD, WORKSPACE for bazel
 Plugin 'lervag/vimtex'        " latex
 Plugin 'pangloss/vim-javascript'
+Plugin 'leafgarland/typescript-vim' " It requires to use the following install command
+" git clone https://github.com/leafgarland/typescript-vim.git ~/.vim/pack/typescript/start/typescript-vim
+
 
 " golang source list tagbar
 "Plugin 'majutsushi/tagbar'
@@ -106,6 +109,7 @@ Plugin 'skywind3000/gutentags_plus'
 Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmt'
 Plugin 'maksimr/vim-jsbeautify'
+Plugin 'hushicai/tagbar-javascript.vim'
 
 " Also add Glaive, which is used to configure codefmt's maktaba flags. See
 " `:help :Glaive` for usage.
