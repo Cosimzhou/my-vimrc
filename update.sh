@@ -1,10 +1,10 @@
 #!  /bin/bash
 
-direct=${1:-In}
+direct=${1:-save}
 
 mkdir -p bak
 
-if [ $direct = In ]; then
+if [ $direct = save ]; then
 	dirty=`git status -s|grep vimrc.vim|wc -l`
   if [ "$dirty" -ge 1 ]; then
     echo -n "Do you want to back the vimrc file, it will be overwritten[y/c/N]: "

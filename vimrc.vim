@@ -74,6 +74,7 @@ Plugin 'zivyangll/git-blame.vim'
 Plugin 'iamcco/mathjax-support-for-mkdp'
 Plugin 'iamcco/markdown-preview.vim'
 
+Plugin 'sirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 "Plugin 'sirver/ultisnips'
 
@@ -109,6 +110,8 @@ Plugin 'maksimr/vim-jsbeautify'
 " Also add Glaive, which is used to configure codefmt's maktaba flags. See
 " `:help :Glaive` for usage.
 Plugin 'google/vim-glaive'
+
+Plugin 'preservim/nerdtree'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -157,6 +160,9 @@ let g:mapleader = ","
 
 " System clipboard copy & paste
 nmap <leader>y  "+y
+
+let &t_TI=""
+let &t_TE=""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
@@ -288,11 +294,15 @@ set tabstop=2
 set linebreak
 set tw=500
 
+set list
+set listchars=tab:>_,trail:_
+
 set autoindent " Auto indent (ai)
 set smartindent " Smart indent (si)
 set nowrap " Don't wrap lines
 "set wrap "Wrap lines
 noremap <leader>w   :set wrap!<CR>
+noremap <leader>r   :set nu! rnu!<CR>
 "inoremap <silent><Esc>  <Esc>`^
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -311,7 +321,10 @@ let g:vimtex_quickfix_mode=0
 set conceallevel=1
 let g:tex_conceal='abdmg'
 
+"""""""""""""""""""""""""""""""""""""""""""""""""
+"
 " vim-go settings
+"        Golang
 let g:go_fmt_command = "goimports"
 let g:go_version_warning = 0
 autocmd FileType go nmap <leader>I <Plug>(go-implements)
@@ -343,7 +356,7 @@ autocmd FileType go nmap <leader>e <Plug>(go-rename)　
 "
 "   pip install pygments
 "
-"let $GTAGSLABEL = 'native-pygments'
+let $GTAGSLABEL = 'native-pygments'
 let $GTAGSLABEL = 'native'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 
@@ -683,7 +696,6 @@ vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
 "   <leader>p
 "
 map <leader>cc :botright cope<cr>
-map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
 
@@ -711,6 +723,8 @@ noremap <Leader>mmm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
 
+" copy all content and paste into a new tab
+map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>Pgg
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -849,7 +863,7 @@ function! ChangeCppFile()
 endfunction
 autocmd FileType c,cpp nmap <leader>c :call ChangeCppFile()<CR>
 nmap <leader>o :e <c-r>#<CR>
-nmap <leader>p :set paste<CR>
+nmap <leader>p :set paste!<CR>
 
 
 " Try to run c/c++ project built by bazel, make and so on.
