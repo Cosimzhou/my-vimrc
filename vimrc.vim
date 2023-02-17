@@ -331,18 +331,32 @@ let g:tex_conceal='abdmg'
 "        Golang
 let g:go_fmt_command = "goimports"
 let g:go_version_warning = 0
-autocmd FileType go nmap <leader>I <Plug>(go-implements)
-autocmd FileType go nmap <leader>i <Plug>(go-info)
-autocmd FileType go nmap <leader>gd <Plug>(go-doc)
-autocmd FileType go nmap <leader>gv <Plug>(go-doc-vertical)
-autocmd FileType go nmap <leader>r <Plug>(go-run)
-autocmd FileType go nmap <leader>b <Plug>(go-build)
-autocmd FileType go nmap <leader>t <Plug>(go-test)
-autocmd FileType go nmap <leader>c <Plug>(go-coverage)
-autocmd FileType go nmap <leader>ds <Plug>(go-def-split)
-autocmd FileType go nmap <leader>dv <Plug>(go-def-vertical)
-autocmd FileType go nmap <leader>dt <Plug>(go-def-tab)
-autocmd FileType go nmap <leader>e <Plug>(go-rename)　
+let g:go_list_type = "quickfix"
+"let g:go_list_type = "location list"
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_generate_tags = 1
+
+autocmd FileType go nmap <leader>I       <Plug>(go-implements)
+autocmd FileType go nmap <leader>i       <Plug>(go-info)
+autocmd FileType go nmap <leader>gdd     <Plug>(go-doc)
+autocmd FileType go nmap <leader>gv      <Plug>(go-doc-vertical)
+autocmd FileType go nmap <leader>gr      <Plug>(go-referrers)
+autocmd FileType go nmap <leader>r       <Plug>(go-run)
+autocmd FileType go nmap <leader>b       <Plug>(go-build)
+autocmd FileType go nmap <leader>t       <Plug>(go-test)
+autocmd FileType go nmap <leader>c       <Plug>(go-alternate)
+autocmd FileType go nmap <leader>gc      <Plug>(go-coverage)
+autocmd FileType go nmap <Leader>C       <Plug>(go-coverage-toggle)
+"autocmd FileType go nmap         gd      <Plug>(go-def)
+autocmd FileType go nmap <leader>ds      <Plug>(go-def-split)
+autocmd FileType go nmap <leader>dv      <Plug>(go-def-vertical)
+autocmd FileType go nmap <leader>dt      <Plug>(go-def-tab)
+autocmd FileType go nmap <leader>e       <Plug>(go-rename)　
+autocmd FileType go nmap <leader>gg       yiw:vimgrep /\C\<<C-R>"\>/ ./**/*.go<cr>/\C\<<C-R>"\><cr>N
 
 " gtags
 "
@@ -700,8 +714,8 @@ vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
 "   <leader>p
 "
 map <leader>cc :botright cope<cr>
-map <leader>n :cn<cr>
-map <leader>p :cp<cr>
+map <leader>cn :cn<cr>
+map <leader>cp :cp<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
